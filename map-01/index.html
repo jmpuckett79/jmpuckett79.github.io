@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Map 1 starter</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        /* Additional style rules go here! */
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Iguana Safe Map</h1>
+        <h2>Use map to keep safe</h2>
+    </header>
+
+    <div id='map'></div>
+
+    <footer>
+        
+        
+        <p>Map authored by Jeremy Puckett</p>
+        <p>See below for instructions.</p>
+        <p>Click on the map if a red circle pops up you are in a danger zone.  If a blue circle pops up you are in a safe zone.
+        </p>
+    </footer>
+
+    <script>
+    var map = L.map('map', {
+        center: [-37.814,144.963],
+        zoom: 10,
+        minZoom: 4,
+        maxZoom: 15,
+    });
+   var Thunderforest_Outdoors = L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+});
+  
+    map.addLayer(Thunderforest_Outdoors); //    
+        
+        var iguanaZones = [
+            {
+                name: 'lz1',
+                coordinates: [-37.854506, 144.797431],
+                properties: {
+                    size: 1850
+                }
+            },
+            {
+                name: 'lz2',
+                coordinates: [-37.749253, 144.855108],
+                properties: {
+                    size: 2500
+                }
+            },
+            {
+                name: 'lz3',
+                coordinates: [-37.770967, 144.943686],
+                properties: {
+                    size: 2150
+                }
+            },
+            {
+                name: 'lz4',
+                coordinates: [-37.720472, 145.002051],
+                properties: {
+                    size: 2000
+                }
+            },
+            {
+                name: 'lz5',
+                coordinates: [-37.774767, 145.033635],
+                properties: {
+                    size: 2500
+                }
+            },
+            {
+                name: 'lz6',
+                coordinates: [-37.827394, 145.040503],
+                properties: {
+                    size: 2350
+                }
+            },
+            {
+                name: 'lz7',
+                coordinates: [-37.767711, 145.116720],
+                properties: {
+                    size: 1100
+                }
+            },
+            {
+                name: 'lz8',
+                coordinates: [-37.829563, 145.129767],
+                properties: {
+                    size: 1450
+                }
+            },
+            {
+                name: 'lz9',
+                coordinates: [-37.779108, 145.749365],
+                properties: {
+                    size: 950
+                }
+            },
+            {
+                name: 'lz10',
+                coordinates: [-37.868059, 145.0714022],
+                properties: {
+                    size: 2000
+                }
+            },
+            {
+                name: 'lz11',
+                coordinates: [-37.932565, 145.080328],
+                properties: {
+                    size: 1700
+                }
+            },
+            {
+                name: 'lz12',
+                coordinates: [-37.873479, 145.1963717],
+                properties: {
+                    size: 1200
+                }
+            }
+        ]; // end iguanaShips data
+        
+        var dangerCircle = L.circle(dangerCircle, 400);
+        dangerCircle.addTo(map);
+
+        
+         dangerCircle.setStyle({
+            color: "#d72b1e", 
+            weight: 15,
+            fillColor: "#d72b1e", 
+            fillOpacity: 1 
+
+        });
+        var safeCircle = L.circle(safeCircle, 400);
+          safeCircle.addTo(map);
+
+        safeCircle.setStyle({
+            color: "#2c0cdd", 
+            weight: 15,
+            fillColor: "#1e39ce", 
+            fillOpacity: 1 
+
+        });
+
+        var iguanaLayer = L.layerGroup();
+        for(var i=0; i<iguanaZones.length;i++){
+            var lzName=iguanaZones[i].name;
+            var lzCoords=iguanaZones[i].coordinates;
+            var lzSize=iguanaZones[i].properties.size;
+            var lzIguana=L.circle(lzCoords,lzSize);
+            lzIguana.addTo(iguanaLayer);
+        }
+        iguanaLayer.addTo(map);
+        
+        var marker; 
+       
+        map.on('click', function(e) {            
+            if(map.hasLayer(marker)) {               
+                map.removeLayer(marker);
+            }
+
+//               
+        var location=e.latlng;
+            console.log("You are at",location);
+            marker=L.marker(location).addTo(map);
+            testDistance(location);
+        }); 
+        
+        function testDistance(location) {
+            
+            iguanaLayer.eachLayer(function(layer) {
+               if(lzCoords+getRadius(lzSize) < 2200){
+                   location.setSyle(dangerCircle);
+               }else(location.setSyle(safeCirlce));
+                     
+
+                  });
+        }
+
+        
+    </script>
+    
+</body>
+
+</html>

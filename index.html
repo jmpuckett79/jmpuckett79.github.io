@@ -9,7 +9,67 @@
 <style>
     
 /* CSS style rules go here! */   
-
+   
+ 
+    header { 
+        width: 100%;
+        min-width: 800px;
+        margin: 0 auto;
+        background: #0487f5;
+        padding: 15px 0 20px;
+        }
+    h1 { 
+        font-family: Dosis, sans-serif;
+        color: #375671; 
+        width: 80%;
+        margin: 0 auto;
+        color: #080808;
+    }
+    h2 { 
+        font-family: Dosis, sans-serif;
+        color: #375671;
+        width: 80%;
+        margin: 0 auto;
+        color: #070606;
+    }
+    h3 {
+        font-family: Dosis, sans-serif;
+        color: #03549a
+    }
+    p { 
+        font-size: .9em; 
+        color: #03549a; 
+    }
+    ul {
+        list-style-type: none; 
+        font-size: .9em; 
+        color: #03549a; 
+        line-height: 1.6em;
+    }
+    a, a:visited {   
+        color: #710009;
+    }
+    
+    .project {
+        width: 80%;
+        min-width: 800px;
+        height: 100%;
+        margin: 35px auto;
+    }
+    .project:after{
+        content: "";
+        display: table;
+        clear: both; 
+    }
+    .project-image {
+        width: 388px;
+        height: 240px;
+        background: #0487f5;
+        float: left;
+        margin-right: 20px;
+        border: 2px solid #dddddd;
+    }
+    
 </style>
 </head>
 
@@ -18,16 +78,52 @@
     <h1>Jeremy Puckett Portfolio</h1>
     <h2>Web Mapping at the University of Kentucky</h2>
     </header>
- <section>
-        <image src="images/map-3.gif" alt="map-3">
+ <section class="project">
+        <image src="images/map-3.gif" alt="map-3" class="project-image" />
         <h3>Power Plants by Type</h3>
         <p>This map shows the Hyrdo, Wind, and Nuclear power plants for the continuos United States</p>
         <p>The data is loaded from a javascript file.</p>
         <ul>
-            <li>See the map:<a href="map-03/index.html" />Power Plants</li>
-            <li>See the code:<a href="https://github.com/jmpuckett79/geo409/blob/master/map-03/index.html" />Github</li>
+            <li>See the map:<a href="map-03/index.html" />Power Plants</a></li>
+            <li>See the code:<a href="https://github.com/jmpuckett79/geo409/blob/master/map-03/index.html" />Github</a></li>
         <ul>
     </section>   
     
+    
+ <section class="project">
+        <image src="images/map-2.gif" alt="map-2" class="project-image" />
+        <h3>Power Plants by Production</h3>
+        <p>This map shows power plants by production within a 400 km raduis</p>
+        <p>The data is loaded from a javascript file.</p>
+        <ul>
+            <li>See the map:<a href="map-02/index.html" />Power Plants</a></li>
+            <li>See the code:<a href="https://github.com/jmpuckett79/geo409/blob/master/map-02/index.html" />Github</a></li>
+        <ul>
+    </section>
+
+    
+
+<section class="project">
+        <image src="images/map-1.gif" alt="map-1" class="project-image" />
+        <h3>Iguana Melbourne Rampage</h3>
+        <p>This map shows the safe zones after the Giant Iguana landing.</p>
+        <p>The user location is used to determine safety.</p>
+        <ul>
+            <li>See the map:<a href="map-01/index.html" />Iguana Safe Map</a></li>
+            <li>See the code:<a href="https://github.com/jmpuckett79/geo409/blob/master/map-01/index.html" />Github</a></li>
+        <ul>
+    </section>
+
+<section class="project">
+        <image src="images/final.gif" alt="final" class="project-image" />
+        <h3>Cane Run Creek Swallets</h3>
+        <p>This map shows the swallets that drain from Cane Run Creek.</p>
+        <p>User may select rain fall event then determine if draining.</p>
+        <ul>
+            <li>See the map:<a href="final/index.html" />Under Construction</a></li>
+            <li>See the code:<a href="https://github.com/jmpuckett79/geo409/blob/master/final/index.html" />Under Construction</a></li>
+        <ul>
+    </section>
+
 </body>
 </html>

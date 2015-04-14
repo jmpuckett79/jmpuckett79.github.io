@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Geo409 Map 02</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        /* Additional style rules go here! */
+        
+    </style>
+</head>
+
+<body>
+    <header>
+        Power Map
+    </header>
+
+    <div id='map'></div>
+    
+    <footer>
+     <p>Map authored by Jeremy Puckett</p>
+        <p>See below for instructions.</p>
+        <p>All Hyrdo Electric Power plants within 400km of Knoxville, TN.
+        </p>   
+    </footer>
+        
+        <script src="power-plants-assignment.js"></script>
+    <script>
+                  
+          // add JavaScript here
+        
+    var map = L.map('map', {
+        center: [35.9728,-83.9422],
+        zoom: 10,
+        minZoom: 4,
+        maxZoom: 15,
+    });
+   var Thunderforest_Outdoors = L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+});
+  
+    map.addLayer(Thunderforest_Outdoors); //    
+    console.log(plants)        
+        
+    plants.features.sort(function(a,b) {
+			return b.properties.capacity_mw - a.properties.capacity_mw;
+		});
+               
+        L.geoJson(plants, {
+            pointToLayer: function(feature,latlng) {
+                 return L.circleMarker(latlng, {
+                     color: 'blue',
+                     weight: 1.5,
+                     fillColor: 'black',
+                     fillOpacity: .75,
+                     radius: getRadius(feature.properties.capacity_mw)
+                 });   
+            },
+            filter: function(feature, layer) {
+                if(feature.properties.capacity_mw <= 400){
+                    return feature;   
+                }
+            },
+            var knoxville =
+                [
+                    coordinates:[35.9728,-83.9422],
+            ]
+            
+            
+            var location=latlng(knoxville);
+            testDistance(location);
+            }); 
+        
+            function testDistance(location) {
+            
+            filter:function(feature,layer) {
+               if(feature.properties.latlog < 400){
+                   return feature;                     
+                  });
+            
+            filter: function(feature, layer) {
+                if(feature.properties.fuel_source = "hydro"){
+                    return feature;   
+                }
+            },
+            onEachFeature: function(feature,layer) {
+                var props = feature.properties;
+                var content = "<b>"+props.plant_name+"</b><br>"+
+                    props.capacity_mw.toLocaleString()+" MW<br>";
+                var source = props.fuel_source;
+                for(var fuel in source){
+                    content+="<b>"+fuel+"</b>: "+source[fuel].toLocaleString()+" MW<br>";
+                }
+                layer.bindPopup(content); 
+                
+                layer.on('mouseover', function() {
+                    layer.setStyle({
+                        fillColor: 'red'
+                    });
+                });
+                layer.on('mouseout', function() {
+                    layer.setStyle({
+                        fillColor: 'yellow'
+                    });
+                });
+            }
+        }).addTo(map);
+        
+      
+        function getRadius(val) {
+            var radius = Math.sqrt(val/Math.PI);
+            return radius * .8;   
+        }        
+    </script>
+    
+</body>
+
+</html>
