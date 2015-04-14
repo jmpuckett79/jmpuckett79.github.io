@@ -3,7 +3,7 @@
 
 <head>
     <meta charset=utf-8 />
-    <title>Map 1 starter</title>
+    <title>Map 1 Solution</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
@@ -44,7 +44,7 @@
             font-size: 1em;
             color: #001323;
         }
-        /* Additional style rules go here! */
+        
     </style>
 </head>
 
@@ -57,8 +57,6 @@
     <div id='map'></div>
 
     <footer>
-        
-        
         <p>Map authored by Jeremy Puckett</p>
         <p>See below for instructions.</p>
         <p>Click on the map if a red circle pops up you are in a danger zone.  If a blue circle pops up you are in a safe zone.
@@ -66,18 +64,19 @@
     </footer>
 
     <script>
-    var map = L.map('map', {
-        center: [-37.814,144.963],
-        zoom: 10,
-        minZoom: 4,
-        maxZoom: 15,
-    });
-   var Thunderforest_Outdoors = L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-});
-  
-    map.addLayer(Thunderforest_Outdoors); //    
+        var map = L.map('map', {
+            center: [-37.832565, 144.982796],
+            zoom: 11
+        });
+        var tiles = L.tileLayer('http://a{s}.acetate.geoiq.com/tiles/acetate-hillshading/{z}/{x}/{y}.png', {
+            attribution: '&copy;2012 Esri & Stamen, Data from OSM and Natural Earth',
+            subdomains: '0123',
+            minZoom: 2,
+            maxZoom: 18
+        });
+        map.addLayer(tiles);
         
+        // continue JavaScript coding here!
         var iguanaZones = [
             {
                 name: 'lz1',
@@ -165,63 +164,80 @@
             }
         ]; // end iguanaShips data
         
-        var dangerCircle = L.circle(dangerCircle, 400);
-        dangerCircle.addTo(map);
-
+        // create an object to hold default options
+        var iguanaOptions = {
+            color: "blue",
+            fillColor: "blue"       
+        };
+        // create an object to hold highlighted options
+        var iguanaThreatOptions = { 
+            color: 'orange', 
+            fillColor: 'orange'
+        };
         
-         dangerCircle.setStyle({
-            color: "#d72b1e", 
-            weight: 15,
-            fillColor: "#d72b1e", 
-            fillOpacity: 1 
-
-        });
-        var safeCircle = L.circle(safeCircle, 400);
-          safeCircle.addTo(map);
-
-        safeCircle.setStyle({
-            color: "#2c0cdd", 
-            weight: 15,
-            fillColor: "#1e39ce", 
-            fillOpacity: 1 
-
-        });
-
-        var iguanaLayer = L.layerGroup();
-        for(var i=0; i<iguanaZones.length;i++){
-            var lzName=iguanaZones[i].name;
-            var lzCoords=iguanaZones[i].coordinates;
-            var lzSize=iguanaZones[i].properties.size;
-            var lzIguana=L.circle(lzCoords,lzSize);
-            lzIguana.addTo(iguanaLayer);
+        // create a new layergroup to hold circles
+        var iguanaGroup = L.layerGroup();
+        
+        // for each object in our array of data
+        for(var i=0; i<iguanaZones.length; i++) {
+            
+            // create a new circle and add it to the iguanaGroup layer
+            var iguanaColony = L.circle(iguanaZones[i].coordinates,
+                                iguanaZones[i].properties.size,
+                                iguanaOptions)
+                                .addTo(iguanaGroup); 
         }
-        iguanaLayer.addTo(map);
         
-        var marker; 
-       
-        map.on('click', function(e) {            
-            if(map.hasLayer(marker)) {               
+        // add the inguanaGroup to the map
+        iguanaGroup.addTo(map);
+        
+        // declare an undefined variable
+        var marker;
+        
+       // when the user clicks on the map
+        map.on('click', function(e) { 
+            // if the marker exists and is defined
+            if(map.hasLayer(marker)) { 
+               // remove it from the map
                 map.removeLayer(marker);
             }
-
-//               
-        var location=e.latlng;
-            console.log("You are at",location);
-            marker=L.marker(location).addTo(map);
-            testDistance(location);
-        }); 
-        
-        function testDistance(location) {
             
-            iguanaLayer.eachLayer(function(layer) {
-               if(lzCoords+getRadius(lzSize) < 2200){
-                   location.setSyle(dangerCircle);
-               }else(location.setSyle(safeCirlce));
-                     
-
-                  });
+            // store the click coordinates in a variable
+            var clickCoords = e.latlng; 
+            
+            // create a marker using those coods, 
+            // add it to the map and assign it
+            // to the existing variable marker
+            marker = L.marker(clickCoords).addTo(map);
+            
+            // call the function and pass the marker's coords
+            testDistance(clickCoords);
+        
+        });
+        
+        // function parameter is the coords passed from the caller
+        function testDistance(testCoords) { 
+            
+            // iterate through eacy layer of the iguanaGroup
+            iguanaGroup.eachLayer(function(layer) {
+               
+                // determine distance between marker and layer
+                var distance = testCoords.distanceTo(layer.getLatLng());
+                
+                // subtract radius from distance
+                distance = distance - layer.getRadius();
+               
+                // if that distance is too close
+                if(distance < 2200) {
+                    // change the layer option to indicate a threat
+                    layer.setStyle(iguanaThreatOptions);
+                } else {
+                    // otherwise, ensure layer options are still default
+                    layer.setStyle(iguanaOptions); 
+                }
+            });
         }
-
+        
         
     </script>
     

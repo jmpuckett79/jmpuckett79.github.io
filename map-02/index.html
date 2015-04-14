@@ -49,6 +49,7 @@
     </style>
 </head>
 
+
 <body>
     <header>
         Power Map
@@ -62,74 +63,59 @@
         <p>All Hyrdo Electric Power plants within 400km of Knoxville, TN.
         </p>   
     </footer>
-        
-        <script src="power-plants-assignment.js"></script>
+   <script src="power-plants-assignment.js"></script>
     <script>
-                  
-          // add JavaScript here
+        var map = L.map('map', {
+            center: [35.9728,-83.9422],
+            zoom: 6,
+        });
+       
+        var tiles = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', 
+                                         {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+            subdomains: 'abcd',
+            minZoom: 0,
+            maxZoom: 18
+        });
+        map.addLayer(tiles);
         
-    var map = L.map('map', {
-        center: [35.9728,-83.9422],
-        zoom: 10,
-        minZoom: 4,
-        maxZoom: 15,
-    });
-   var Thunderforest_Outdoors = L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-});
-  
-    map.addLayer(Thunderforest_Outdoors); //    
-    console.log(plants)        
+        // Begin writing/modifying code for Map 2 here
         
-    plants.features.sort(function(a,b) {
-			return b.properties.capacity_mw - a.properties.capacity_mw;
+        var knoxCoords = L.latLng(35.9728, -83.9422);
+        
+        plants.features.sort(function(a,b) {
+			return b.properties.capacity_mw - a.properties.capacity;
 		});
                
         L.geoJson(plants, {
             pointToLayer: function(feature,latlng) {
                  return L.circleMarker(latlng, {
-                     color: 'blue',
-                     weight: 1.5,
-                     fillColor: 'black',
-                     fillOpacity: .75,
-                     radius: getRadius(feature.properties.capacity_mw)
+                     color: 'orange',
+                     weight: 1,
+                     fillColor: 'yellow',
+                     fillOpacity: .8,
+                     radius: getRadius(feature.properties.source["Hydro"])
                  });   
             },
             filter: function(feature, layer) {
-                if(feature.properties.capacity_mw <= 400){
-                    return feature;   
-                }
-            },
-            var knoxville =
-                [
-                    coordinates:[35.9728,-83.9422],
-            ]
-            
-            
-            var location=latlng(knoxville);
-            testDistance(location);
-            }); 
-        
-            function testDistance(location) {
-            
-            filter:function(feature,layer) {
-               if(feature.properties.latlog < 400){
-                   return feature;                     
-                  });
-            
-            filter: function(feature, layer) {
-                if(feature.properties.fuel_source = "hydro"){
-                    return feature;   
+                var featureCoords = L.latLng(feature.geometry.coordinates[1], feature.geometry.coordinates[0]);
+                
+                if(lexCoords.distanceTo(featureCoords)/1000 < 400 &&
+                    feature.properties.source["Hydro"] && 
+                    feature.properties.capacity < 500) {
+                    return feature;
                 }
             },
             onEachFeature: function(feature,layer) {
+                var distance = knoxCoords.distanceTo(L.latLng(feature.geometry.coordinates[1], feature.geometry.coordinates[0]))/1000;
                 var props = feature.properties;
                 var content = "<b>"+props.plant_name+"</b><br>"+
-                    props.capacity_mw.toLocaleString()+" MW<br>";
-                var source = props.fuel_source;
+                    props.capacity.toLocaleString()+" MW<br>";
+                var source = props.source;
                 for(var fuel in source){
                     content+="<b>"+fuel+"</b>: "+source[fuel].toLocaleString()+" MW<br>";
                 }
+                content+= "This plant is <b>"+distance.toLocaleString()+" km</b> from Knoxville."
                 layer.bindPopup(content); 
                 
                 layer.on('mouseover', function() {
@@ -144,13 +130,14 @@
                 });
             }
         }).addTo(map);
-        
-      
+           
         function getRadius(val) {
             var radius = Math.sqrt(val/Math.PI);
             return radius * .8;   
         }        
-    </script>
+        
+    </script>     
+        
     
 </body>
 
