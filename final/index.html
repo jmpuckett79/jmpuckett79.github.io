@@ -1,77 +1,204 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<title>Geo404/709 Portfolio Example</title>
+    <meta charset=utf-8 />
+    <title>Geo409 Task H Starter</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
-<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 
-<style>
-    
-/* CSS style rules go here! */   
-   
- 
-    header { 
-        width: 100%;
-        min-width: 800px;
-        margin: 0 auto;
-        background: #030303;
-        padding: 15px 0 20px;
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+     <div id="ui-controls">
+        <input type="range" min="1", max="3", 
+                value="1", step="1" class="rain-slider"></input>
+    </div>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
         }
-    h1 { 
-        font-family: Dosis, sans-serif;
-        color: #f9fafc; 
-        width: 80%;
-        margin: 0 auto;
-        color: #fcfafa;
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        /* Additional style rules go here! */
+        
+        .blue {
+            color: #165bb6;
+        }
+        .red {
+            color: #cc0000;
+        }
+        .purple {
+            color: #b6165b; 
+        }
+        
+
+        #ui-controls {
+        width: 176px;   
+        padding: 8px 15px 8px 15px;
+        background: rgba(75,75,75,0.8);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px; 
+        color: whitesmoke;
     }
-    
-    p { 
-        font-size: .9em; 
-        color: #03549a; 
+    .rain-slider {
+        width: 100%;
     }
-    ul {
-        list-style-type: none; 
-        font-size: .9em; 
-        color: #03549a; 
-        line-height: 1.6em;
-    }
-    a, a:visited {   
-        color: #710009;
-    }
-    
-    .project {
-        width: 80%;
-        min-width: 800px;
-        height: 100%;
-        margin: 35px auto;
-    }
-    .project:after{
-        content: "";
-        display: table;
-        clear: both; 
-    }
-    .project-image {
-        width: 388px;
-        height: 240px;
-        background: #0487f5;
-        float: left;
-        margin-right: 20px;
-        border: 2px solid #dddddd;
-    }
-    
-</style>
+    </style>
 </head>
 
 <body>
-<header>
-    <h1>Future home of Cane Run Creek Swallets</h1>
-    
+    <header>
+        <h1>Cane Run Creek Swallets</h1>
+        <h2>Underground Hydrology Entrance Geomorphology</h2>
     </header>
+
+    <div id='map'></div>
+
+    <footer>
+        <p>Map authored by Jeremy Puckett</p>
+        <p>All known swallets(swallow holes) are mapped.</p>
+        <p>Data derived from KGS and field collection.  Use the slider to determine which swallets are filling during heavier rainfalls.
+        </p>
+    </footer>
+    
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'>
+        </script>
+        <script>
+
+        var map = L.map('map', {
+            center: [38.145467, -84.520542],
+            zoom: 11,
+        });
+       
+        var tiles = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+	       minZoom: 9,
+            maxZoom: 16
+});
+        map.addLayer(tiles);
+        
+        
+        var fun = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "",
+        "Name": "Guard Shack Swallet",
+        "What": "Near Entrance",
+        "size": 20  
+      },
+     "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.520542,
+          38.145467
+        ]
+      }
+    }
+  ]
+        }
+        
+    var pointOptions = {
+        color: "red"
+        
+    }
+    var lineOptions = {
+        color: "red"  
+    }
+    var polygonOptions = {
+        color: "green"   
+    } 
+    
+    var mapFun = L.geoJson(fun, {
+        pointToLayer: function(feature, latlng) {
+            console.log(feature);
+            console.log(latlng);
+            return L.circle(latlng, feature.properties.size);
+        },
+         style : function(feature) {
+            return { dashArray: "1, 1",
+                     weight: 3
+                   }   
+        },
+        onEachFeature: function(feature, layer) {
+            if(feature.geometry.type == "Point") {
+                layer.setStyle(pointOptions);
+                layer.bindPopup(feature.properties.Name + "  " + feature.properties.What)
+            }
+            if(feature.geometry.type == "LineString") {
+                layer.setStyle(lineOptions);
+                layer.bindPopup(feature.properties.Name + "  " + feature.properties.What)
+            }   
+            if(feature.geometry.type == "Polygon") {
+                layer.setStyle(polygonOptions);
+                layer.bindPopup(feature.properties.Name + "  " + feature.properties.What)
+            }
+        }
+    }).addTo(map); 
+        
+    //if(feature.2=="1",
+            //color: "green";
+            //if(feature.3=="1"
+            //color: "blue"
+     var sliderControl = L.control({ position: 'bottomleft'} );
+
+    
+    sliderControl.onAdd = function(map) {
+
+        
+        var slider = L.DomUtil.get("ui-controls");
+
+            
+            L.DomEvent.addListener(slider, 'mousedown', function(e) { 
+
+                L.DomEvent.stopPropagation(e); 
+
+            });
+
+        
+        return slider;
+    }
+
+    
+    sliderControl.addTo(map);
    
+        
+    omnivore.csv('swallet.csv').addTo(map);
+            
+    </script>
     
-    
-
-
 </body>
+
 </html>
